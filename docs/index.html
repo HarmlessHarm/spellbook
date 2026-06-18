@@ -126,7 +126,8 @@
   .count{font-family:var(--alchemist); font-size:12px; letter-spacing:.06em; color:var(--faded-ink); margin:22px 0 24px}
 
   .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:var(--gutter); padding-bottom:96px}
-  .card{position:relative; background:var(--surface-low); border-radius:2px; padding:24px; transition:transform .25s ease}
+  .card{position:relative; background:var(--surface-low); border-radius:2px; padding:24px; transition:transform .25s ease; cursor:pointer; outline:none}
+  .card:focus-visible{box-shadow:0 0 0 2px var(--ember)}
   .card .corner{position:absolute; width:14px; height:14px; border:1px solid var(--outline-variant); transition:border-color .25s}
   .corner.tl{top:0; left:0; border-right:0; border-bottom:0}
   .corner.tr{top:0; right:0; border-left:0; border-bottom:0}
@@ -142,7 +143,6 @@
   .srow{display:flex; align-items:center; gap:.6rem; margin-bottom:.85rem}
   .school{font-family:var(--alchemist); font-size:12px; letter-spacing:.1em; text-transform:uppercase}
   .git .school{color:var(--ember)} .debugging .school{color:var(--mana)} .testing .school{color:var(--arcane)}
-  .tier{margin-left:auto; font-family:var(--sage); font-style:italic; font-size:15px; color:var(--on-surface-variant)}
   .card h3{font-family:var(--sage); font-weight:500; font-size:24px; line-height:32px; margin:0 0 .5rem}
   .card .desc{font-family:var(--scribe); font-style:italic; font-size:14px; line-height:20px;
     color:var(--faded-ink); margin:0 0 1.1rem; min-height:3.3em}
@@ -161,6 +161,28 @@
 
   .empty{grid-column:1/-1; text-align:center; padding:72px 0; font-family:var(--sage); font-style:italic;
     font-size:24px; color:var(--faded-ink)}
+
+  /* ---- spell detail page ---- */
+  #spell-page{padding:32px 0 96px}
+  .back{display:inline-flex; align-items:center; gap:.4rem; font-family:var(--alchemist); font-size:12px;
+    letter-spacing:.06em; text-transform:uppercase; color:var(--faded-ink); text-decoration:none; margin-bottom:28px}
+  .back:hover{color:var(--primary)}
+  .spell-detail{max-width:760px}
+  .spell-detail h1{font-family:var(--sage); font-weight:600; font-size:40px; line-height:48px;
+    letter-spacing:-.02em; margin:.5rem 0 .6rem}
+  .spell-detail .lede{font-family:var(--scribe); font-style:italic; font-size:18px; line-height:28px;
+    color:var(--on-surface-variant); margin:0 0 1.3rem}
+  .spell-detail .scroll{margin:1.4rem 0 0}
+  .spell-body{border-top:1px solid rgba(160,142,122,.14); margin-top:2rem; padding-top:1.8rem}
+  .spell-body h2{font-family:var(--sage); font-weight:600; font-size:22px; line-height:28px; margin:1.8rem 0 .7rem}
+  .spell-body h2:first-child{margin-top:0}
+  .spell-body h3{font-family:var(--sage); font-weight:600; font-size:18px; margin:1.3rem 0 .5rem}
+  .spell-body p{color:var(--on-surface-variant); margin:0 0 1rem}
+  .spell-body ol,.spell-body ul{color:var(--on-surface-variant); padding-left:1.3rem; margin:0 0 1.1rem;
+    display:flex; flex-direction:column; gap:.45rem}
+  .spell-body li{line-height:24px}
+  .spell-body code{font-family:var(--alchemist); font-size:13px; color:var(--primary);
+    background:var(--surface-lowest); border:1px solid var(--outline-variant); border-radius:3px; padding:.05rem .35rem}
 
   footer{border-top:1px solid rgba(160,142,122,.14); padding:34px 0 80px; display:flex; gap:1.6rem;
     flex-wrap:wrap; align-items:center; justify-content:center; font-family:var(--alchemist);
@@ -195,7 +217,7 @@
 </header>
 
 <div class="wrap">
-  <section class="hero">
+  <section class="hero" id="hero">
     <svg class="sigil" viewBox="0 0 120 120" aria-hidden="true">
       <circle class="d1" cx="60" cy="60" r="54"/>
       <circle class="d2" cx="60" cy="60" r="40"/>
@@ -212,7 +234,7 @@
     </div>
   </section>
 
-  <div class="div" aria-hidden="true">
+  <div class="div" id="divider" aria-hidden="true">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/></svg>
   </div>
 
@@ -228,6 +250,8 @@
     <p class="count" id="count"></p>
     <div class="grid" id="grid"></div>
   </section>
+
+  <section id="spell-page" hidden></section>
 
   <footer>
     <a id="repo-foot" href="#" target="_blank" rel="noopener">GitHub</a>
@@ -297,12 +321,13 @@
     for(const s of list){
       const card = document.createElement("article");
       card.className = "card " + s.school;
+      card.tabIndex = 0;
+      card.setAttribute("role", "link");
       card.innerHTML = `
         <span class="corner tl"></span><span class="corner tr"></span>
         <span class="corner bl"></span><span class="corner br"></span>
         <div class="srow">
           <span class="school">${s.school}</span>
-          <span class="tier">Tier ${s.tier}</span>
         </div>
         <h3>${s.name}</h3>
         <p class="desc">${s.description}</p>
@@ -311,6 +336,10 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           Cast — copy install
         </button>`;
+      // The card body opens the spell's page; the Cast button keeps its own job.
+      const open = ()=>{ location.hash = "#" + s.slug; };
+      card.addEventListener("click", e=>{ if(!e.target.closest(".cast")) open(); });
+      card.addEventListener("keydown", e=>{ if(e.key==="Enter") open(); });
       const btn = card.querySelector(".cast");
       btn.addEventListener("click", ()=>{
         navigator.clipboard?.writeText("/plugin install " + s.slug + "@spellbook");
@@ -324,6 +353,68 @@
     }
   }
 
+  // ---- spell detail pages (hash routes like #summon-pr) ----
+  const heroEl = document.getElementById("hero");
+  const dividerEl = document.getElementById("divider");
+  const grimoireEl = document.getElementById("grimoire");
+  const spellPage = document.getElementById("spell-page");
+
+  function escapeHtml(s){ return s.replace(/[&<>]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
+  function inlineMd(s){
+    return escapeHtml(s)
+      .replace(/`([^`]+)`/g, "<code>$1</code>")
+      .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+      .replace(/\*([^*]+)\*/g, "<em>$1</em>");
+  }
+  // Minimal markdown → HTML for the headings/lists/inline our SKILL.md bodies use.
+  function mdToHtml(md){
+    let html = "", list = null;
+    const closeList = ()=>{ if(list){ html += "</"+list+">"; list = null; } };
+    for(const raw of (md || "").replace(/\r/g,"").split("\n")){
+      const line = raw.trim();
+      let m;
+      if(!line){ closeList(); continue; }
+      if(m = line.match(/^(#{1,4})\s+(.*)$/)){ closeList(); const lvl = m[1].length; html += `<h${lvl}>${inlineMd(m[2])}</h${lvl}>`; }
+      else if(m = line.match(/^\d+\.\s+(.*)$/)){ if(list!=="ol"){ closeList(); html += "<ol>"; list = "ol"; } html += `<li>${inlineMd(m[1])}</li>`; }
+      else if(m = line.match(/^[-*]\s+(.*)$/)){ if(list!=="ul"){ closeList(); html += "<ul>"; list = "ul"; } html += `<li>${inlineMd(m[1])}</li>`; }
+      else { closeList(); html += `<p>${inlineMd(line)}</p>`; }
+    }
+    closeList();
+    return html;
+  }
+
+  function renderSpell(s){
+    spellPage.innerHTML = `
+      <a class="back" href="#grimoire">← Back to the grimoire</a>
+      <article class="spell-detail ${s.school}">
+        <div class="srow"><span class="school">${s.school}</span></div>
+        <h1>${s.name}</h1>
+        <p class="lede">${s.description}</p>
+        <div class="tags">${s.tags.map(t=>`<span class="tag">${t}</span>`).join("")}</div>
+        <div class="scroll">
+          <code><span class="sigil-prompt">›</span>/plugin install ${s.slug}@spellbook</code>
+          <button class="conjure" type="button">Copy</button>
+        </div>
+        <div class="spell-body">${mdToHtml(s.body)}</div>
+      </article>`;
+    const btn = spellPage.querySelector(".conjure");
+    btn.addEventListener("click", ()=>{
+      navigator.clipboard?.writeText("/plugin install " + s.slug + "@spellbook");
+      btn.textContent = "Copied"; btn.classList.add("pulse");
+      setTimeout(()=>{ btn.textContent = "Copy"; btn.classList.remove("pulse"); }, 1500);
+    });
+  }
+
+  function router(){
+    const slug = decodeURIComponent(location.hash.replace(/^#/, ""));
+    const spell = SPELLS.find(s=>s.slug===slug);
+    const onDetail = !!spell;
+    heroEl.hidden = dividerEl.hidden = grimoireEl.hidden = onDetail;
+    spellPage.hidden = !onDetail;
+    if(onDetail){ renderSpell(spell); window.scrollTo(0,0); }
+  }
+  window.addEventListener("hashchange", router);
+
   function summon(){
     if(!SPELLS.length){
       schoolsBox.innerHTML = "";
@@ -333,6 +424,7 @@
     }
     buildSchools();
     render();
+    router();
   }
 
   summon();

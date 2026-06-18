@@ -2,7 +2,6 @@
 name: mend-tests
 description: Repair failing tests without weakening assertions. Use when tests are red and the user wants them green honestly.
 school: testing
-tier: 2
 ---
 
 # Mend Tests

@@ -18,9 +18,9 @@ docs/spells.js                    # registry the page reads (loaded as a script 
 ```
 
 ## Add a new spell
-1. Create `spells/<slug>/SKILL.md` with frontmatter (`name`, `description`, `school`, `tier`).
+1. Create `spells/<slug>/SKILL.md` with frontmatter (`name`, `description`, `school`).
 2. Register it in `.claude-plugin/marketplace.json`.
-3. Add an entry to `docs/spells.js` so it appears on the site.
+3. Add an entry to `docs/spells.js` (including a `body` with the instructions) so it appears on the site and gets its own page at `#<slug>`.
 
 ## Schools (just categories)
 The `school` field is a plain category used for grouping and filter colors on the site:
