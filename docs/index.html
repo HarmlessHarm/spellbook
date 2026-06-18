@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Spell Book — Cast a Spell on Your Workflow</title>
+<meta name="description" content="A personal grimoire of spells: skills, chains, and tools you cast to improve your workflows." />
+<style>
+  :root {
+    --bg: #0d0b14;
+    --bg-panel: #171327;
+    --ink: #e9e4f5;
+    --muted: #9a92b8;
+    --rune: #c9a227;
+    --rune-dim: #6e5e1f;
+    --line: #2a2440;
+    --conjuration: #4ea1ff;
+    --divination: #b06cff;
+    --restoration: #4fd6a0;
+    --glow: 0 0 24px rgba(201,162,39,.25);
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background:
+      radial-gradient(1200px 600px at 70% -10%, rgba(176,108,255,.10), transparent 60%),
+      radial-gradient(900px 500px at -10% 20%, rgba(78,161,255,.08), transparent 55%),
+      var(--bg);
+    color: var(--ink); font-family: var(--sans); line-height: 1.5;
+    min-height: 100vh;
+  }
+  a { color: inherit; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+
+  header.top { display:flex; align-items:center; justify-content:space-between; padding: 22px 0; }
+  .brand { font-family: var(--serif); font-size: 1.25rem; letter-spacing:.02em; display:flex; gap:.55rem; align-items:center; }
+  .brand .sigil { color: var(--rune); filter: drop-shadow(var(--glow)); }
+  .top nav a { text-decoration:none; color:var(--muted); margin-left:1.25rem; font-size:.92rem; }
+  .top nav a:hover { color: var(--ink); }
+
+  .hero { text-align:center; padding: 64px 0 40px; }
+  .hero .kicker { color: var(--rune); font-family: var(--serif); font-style:italic; letter-spacing:.08em; text-transform:uppercase; font-size:.8rem; }
+  .hero h1 { font-family: var(--serif); font-size: clamp(2.2rem, 5vw, 3.6rem); margin:.4rem 0 .6rem; font-weight:600; }
+  .hero h1 em { color: var(--rune); font-style: italic; }
+  .hero p { color: var(--muted); max-width: 620px; margin: 0 auto 1.6rem; }
+  .install {
+    display:inline-flex; align-items:center; gap:.6rem; background: var(--bg-panel);
+    border:1px solid var(--line); border-radius: 10px; padding:.7rem 1rem; font-family: ui-monospace, monospace;
+    font-size:.9rem; color: var(--ink); cursor:pointer;
+  }
+  .install code { color: var(--rune); }
+  .install:hover { border-color: var(--rune-dim); }
+  .copied { color: var(--restoration); font-size:.8rem; margin-left:.4rem; }
+
+  .controls { display:flex; gap:.75rem; flex-wrap:wrap; align-items:center; margin: 34px 0 18px; }
+  .search { flex:1 1 260px; display:flex; align-items:center; gap:.5rem; background:var(--bg-panel); border:1px solid var(--line); border-radius:10px; padding:.55rem .8rem; }
+  .search input { background:transparent; border:0; outline:0; color:var(--ink); width:100%; font-size:.95rem; }
+  .schools { display:flex; gap:.4rem; flex-wrap:wrap; }
+  .chip { border:1px solid var(--line); background:var(--bg-panel); color:var(--muted); border-radius:999px; padding:.35rem .8rem; font-size:.82rem; cursor:pointer; }
+  .chip[aria-pressed="true"] { color:var(--ink); border-color:var(--rune-dim); box-shadow: var(--glow); }
+
+  .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap:16px; padding-bottom:64px; }
+  .card {
+    background: linear-gradient(180deg, var(--bg-panel), #120f1f);
+    border:1px solid var(--line); border-radius:14px; padding:18px; position:relative; overflow:hidden;
+    transition: transform .15s ease, border-color .15s ease;
+  }
+  .card:hover { transform: translateY(-3px); border-color: var(--rune-dim); }
+  .card .school { font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; font-weight:600; }
+  .school.conjuration { color: var(--conjuration); }
+  .school.divination { color: var(--divination); }
+  .school.restoration { color: var(--restoration); }
+  .card h3 { font-family: var(--serif); font-size:1.3rem; margin:.4rem 0 .5rem; }
+  .card p { color: var(--muted); font-size:.9rem; margin:0 0 1rem; min-height: 2.6em; }
+  .tier { position:absolute; top:16px; right:16px; font-family:var(--serif); color:var(--rune); font-size:.8rem; }
+  .tier::before { content:"✦ "; }
+  .tags { display:flex; gap:.35rem; flex-wrap:wrap; margin-bottom: .9rem; }
+  .tag { font-size:.7rem; color:var(--muted); border:1px solid var(--line); border-radius:6px; padding:.15rem .45rem; }
+  .cast { width:100%; background:transparent; border:1px solid var(--rune-dim); color:var(--rune); border-radius:9px; padding:.55rem; font-family: ui-monospace, monospace; font-size:.82rem; cursor:pointer; }
+  .cast:hover { background: rgba(201,162,39,.08); }
+  .empty { color:var(--muted); text-align:center; padding:48px 0; grid-column:1/-1; font-family:var(--serif); font-style:italic; }
+
+  footer { border-top:1px solid var(--line); color:var(--muted); font-size:.85rem; padding:28px 0 56px; display:flex; gap:1.2rem; flex-wrap:wrap; justify-content:center; }
+  footer a { color:var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><span class="sigil">✶</span> The Spell Book</div>
+    <nav>
+      <a href="#grimoire">Grimoire</a>
+      <a id="repo-link" href="#" target="_blank" rel="noopener">GitHub ↗</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="kicker">A personal grimoire</div>
+    <h1>Cast a spell on your <em>workflow</em>.</h1>
+    <p>Each spell is a skill, chain, or tool. Add one to your agent and it can suddenly do something it couldn't before. Browse the grimoire and cast what you need.</p>
+    <div class="install" id="install">
+      <code>/plugin marketplace add YOUR_GITHUB_USERNAME/spellbook</code>
+      <span class="copied" id="copied" hidden>copied ✓</span>
+    </div>
+  </section>
+
+  <section id="grimoire">
+    <div class="controls">
+      <label class="search">🔍 <input id="q" type="search" placeholder="Search spells…  (press /)" /></label>
+      <div class="schools" id="schools"></div>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <footer>
+    <a id="repo-link2" href="#" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://agentskills.io" target="_blank" rel="noopener">SKILL.md Spec</a>
+    <span>Your spells, your rules.</span>
+  </footer>
+</div>
+
+<script>
+const REPO = "YOUR_GITHUB_USERNAME/spellbook"; // <-- edit this
+document.getElementById("repo-link").href =
+document.getElementById("repo-link2").href = "https://github.com/" + REPO;
+
+const grid = document.getElementById("grid");
+const q = document.getElementById("q");
+const schoolsBox = document.getElementById("schools");
+let spells = [], activeSchool = "all";
+
+const installEl = document.getElementById("install");
+installEl.addEventListener("click", () => {
+  navigator.clipboard?.writeText("/plugin marketplace add " + REPO);
+  const c = document.getElementById("copied"); c.hidden = false;
+  setTimeout(() => c.hidden = true, 1500);
+});
+
+document.addEventListener("keydown", e => {
+  if (e.key === "/" && document.activeElement !== q) { e.preventDefault(); q.focus(); }
+});
+
+function render() {
+  const term = q.value.trim().toLowerCase();
+  const list = spells.filter(s => {
+    const matchSchool = activeSchool === "all" || s.school === activeSchool;
+    const hay = (s.name + " " + s.description + " " + (s.tags||[]).join(" ")).toLowerCase();
+    return matchSchool && hay.includes(term);
+  });
+  grid.innerHTML = list.length ? "" : '<div class="empty">No spell answers that call. Try another search.</div>';
+  for (const s of list) {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <span class="tier">Tier ${s.tier}</span>
+      <div class="school ${s.school}">${s.school}</div>
+      <h3>${s.name}</h3>
+      <p>${s.description}</p>
+      <div class="tags">${(s.tags||[]).map(t=>`<span class="tag">${t}</span>`).join("")}</div>
+      <button class="cast" data-slug="${s.slug}">/${s.slug} — copy cast command</button>`;
+    card.querySelector(".cast").addEventListener("click", ev => {
+      navigator.clipboard?.writeText("/plugin install " + s.slug + "@spellbook");
+      ev.target.textContent = "copied ✓"; setTimeout(()=>ev.target.textContent = "/"+s.slug+" — copy cast command", 1500);
+    });
+    grid.appendChild(card);
+  }
+}
+
+fetch("spells.json").then(r=>r.json()).then(d=>{
+  spells = d.spells;
+  const schools = ["all", ...new Set(spells.map(s=>s.school))];
+  schoolsBox.innerHTML = schools.map(s=>`<button class="chip" data-s="${s}" aria-pressed="${s==='all'}">${s}</button>`).join("");
+  schoolsBox.querySelectorAll(".chip").forEach(b=>b.addEventListener("click",()=>{
+    activeSchool = b.dataset.s;
+    schoolsBox.querySelectorAll(".chip").forEach(x=>x.setAttribute("aria-pressed", x===b));
+    render();
+  }));
+  render();
+});
+q.addEventListener("input", render);
+</script>
+</body>
+</html>

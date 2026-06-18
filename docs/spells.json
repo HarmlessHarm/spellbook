@@ -1,0 +1,28 @@
+{
+  "spells": [
+    {
+      "name": "Summon Pull Request",
+      "slug": "summon-pr",
+      "school": "conjuration",
+      "tier": 2,
+      "description": "Conjure a polished pull request from your staged changes — title, summary, and test plan.",
+      "tags": ["git", "pr", "workflow"]
+    },
+    {
+      "name": "Scry the Logs",
+      "slug": "scry-logs",
+      "school": "divination",
+      "tier": 1,
+      "description": "Peer into noisy logs and divine the root cause.",
+      "tags": ["debugging", "logs"]
+    },
+    {
+      "name": "Mend Tests",
+      "slug": "mend-tests",
+      "school": "restoration",
+      "tier": 2,
+      "description": "Repair failing tests without silently weakening assertions.",
+      "tags": ["testing", "ci"]
+    }
+  ]
+}
