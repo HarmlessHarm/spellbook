@@ -1,28 +1,38 @@
-{
-  "spells": [
-    {
-      "name": "Summon Pull Request",
-      "slug": "summon-pr",
-      "school": "conjuration",
-      "tier": 2,
-      "description": "Conjure a polished pull request from your staged changes — title, summary, and test plan.",
-      "tags": ["git", "pr", "workflow"]
-    },
-    {
-      "name": "Scry the Logs",
-      "slug": "scry-logs",
-      "school": "divination",
-      "tier": 1,
-      "description": "Peer into noisy logs and divine the root cause.",
-      "tags": ["debugging", "logs"]
-    },
-    {
-      "name": "Mend Tests",
-      "slug": "mend-tests",
-      "school": "restoration",
-      "tier": 2,
-      "description": "Repair failing tests without silently weakening assertions.",
-      "tags": ["testing", "ci"]
-    }
-  ]
-}
+[
+  {
+    "name": "Summon Familiar",
+    "slug": "summon-familiar",
+    "school": "conjuration",
+    "tier": "II",
+    "description": "Conjure a polished pull request from your staged changes — title, intent, and an honest test plan.",
+    "tags": [
+      "git",
+      "pull-request",
+      "review"
+    ]
+  },
+  {
+    "name": "Glasswork Ritual",
+    "slug": "glasswork-ritual",
+    "school": "automation",
+    "tier": "III",
+    "description": "Chain build, lint, and deploy into one incantation that halts the moment an omen appears.",
+    "tags": [
+      "ci-cd",
+      "pipeline",
+      "chain"
+    ]
+  },
+  {
+    "name": "Scrying Glass",
+    "slug": "scrying-glass",
+    "school": "analysis",
+    "tier": "I",
+    "description": "Peer into tangled logs and stack traces to name the first true cause, not the last loud symptom.",
+    "tags": [
+      "debugging",
+      "logs",
+      "triage"
+    ]
+  }
+]

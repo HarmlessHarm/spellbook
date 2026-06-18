@@ -3,182 +3,343 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>The Spell Book — Cast a Spell on Your Workflow</title>
-<meta name="description" content="A personal grimoire of spells: skills, chains, and tools you cast to improve your workflows." />
+<title>The Spell Book — Cast a spell on your workflow</title>
+<meta name="description" content="A personal grimoire of spells: skills, chains, and tools you cast to give your AI agent new powers." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;1,500&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
 <style>
-  :root {
-    --bg: #0d0b14;
-    --bg-panel: #171327;
-    --ink: #e9e4f5;
-    --muted: #9a92b8;
-    --rune: #c9a227;
-    --rune-dim: #6e5e1f;
-    --line: #2a2440;
-    --conjuration: #4ea1ff;
-    --divination: #b06cff;
-    --restoration: #4fd6a0;
-    --glow: 0 0 24px rgba(201,162,39,.25);
-    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
-    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  :root{
+    --surface:#131315;
+    --surface-lowest:#0e0e10;
+    --surface-low:#1b1b1d;
+    --surface-container:#1f1f21;
+    --surface-high:#2a2a2c;
+    --on-surface:#e5e1e4;
+    --on-surface-variant:#d8c3ad;
+    --outline:#a08e7a;
+    --outline-variant:#534434;
+    --primary:#ffc174;
+    --ember:#f59e0b;
+    --midnight:#16161a;
+    --faded-ink:#a1a1aa;
+    --vellum:#dcd2b9;
+    --mana:#d3bbff;
+    --arcane:#b8c4ff;
+
+    --sage:"EB Garamond", Georgia, serif;
+    --scribe:"Plus Jakarta Sans", system-ui, sans-serif;
+    --alchemist:"Space Mono", ui-monospace, monospace;
+
+    --gutter:24px;
+    --max:1280px;
+    --ember-glow:rgba(245,158,11,.2);
   }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0; background:
-      radial-gradient(1200px 600px at 70% -10%, rgba(176,108,255,.10), transparent 60%),
-      radial-gradient(900px 500px at -10% 20%, rgba(78,161,255,.08), transparent 55%),
-      var(--bg);
-    color: var(--ink); font-family: var(--sans); line-height: 1.5;
-    min-height: 100vh;
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--midnight); color:var(--on-surface);
+    font-family:var(--scribe); font-size:16px; line-height:24px;
+    position:relative; overflow-x:hidden; min-height:100vh;
   }
-  a { color: inherit; }
-  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
-
-  header.top { display:flex; align-items:center; justify-content:space-between; padding: 22px 0; }
-  .brand { font-family: var(--serif); font-size: 1.25rem; letter-spacing:.02em; display:flex; gap:.55rem; align-items:center; }
-  .brand .sigil { color: var(--rune); filter: drop-shadow(var(--glow)); }
-  .top nav a { text-decoration:none; color:var(--muted); margin-left:1.25rem; font-size:.92rem; }
-  .top nav a:hover { color: var(--ink); }
-
-  .hero { text-align:center; padding: 64px 0 40px; }
-  .hero .kicker { color: var(--rune); font-family: var(--serif); font-style:italic; letter-spacing:.08em; text-transform:uppercase; font-size:.8rem; }
-  .hero h1 { font-family: var(--serif); font-size: clamp(2.2rem, 5vw, 3.6rem); margin:.4rem 0 .6rem; font-weight:600; }
-  .hero h1 em { color: var(--rune); font-style: italic; }
-  .hero p { color: var(--muted); max-width: 620px; margin: 0 auto 1.6rem; }
-  .install {
-    display:inline-flex; align-items:center; gap:.6rem; background: var(--bg-panel);
-    border:1px solid var(--line); border-radius: 10px; padding:.7rem 1rem; font-family: ui-monospace, monospace;
-    font-size:.9rem; color: var(--ink); cursor:pointer;
+  body::before{
+    content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(900px 520px at 50% -8%, rgba(245,158,11,.10), transparent 60%),
+      radial-gradient(700px 600px at 100% 20%, rgba(211,187,255,.06), transparent 55%),
+      radial-gradient(700px 600px at 0% 40%, rgba(184,196,255,.05), transparent 55%),
+      var(--midnight);
   }
-  .install code { color: var(--rune); }
-  .install:hover { border-color: var(--rune-dim); }
-  .copied { color: var(--restoration); font-size:.8rem; margin-left:.4rem; }
-
-  .controls { display:flex; gap:.75rem; flex-wrap:wrap; align-items:center; margin: 34px 0 18px; }
-  .search { flex:1 1 260px; display:flex; align-items:center; gap:.5rem; background:var(--bg-panel); border:1px solid var(--line); border-radius:10px; padding:.55rem .8rem; }
-  .search input { background:transparent; border:0; outline:0; color:var(--ink); width:100%; font-size:.95rem; }
-  .schools { display:flex; gap:.4rem; flex-wrap:wrap; }
-  .chip { border:1px solid var(--line); background:var(--bg-panel); color:var(--muted); border-radius:999px; padding:.35rem .8rem; font-size:.82rem; cursor:pointer; }
-  .chip[aria-pressed="true"] { color:var(--ink); border-color:var(--rune-dim); box-shadow: var(--glow); }
-
-  .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap:16px; padding-bottom:64px; }
-  .card {
-    background: linear-gradient(180deg, var(--bg-panel), #120f1f);
-    border:1px solid var(--line); border-radius:14px; padding:18px; position:relative; overflow:hidden;
-    transition: transform .15s ease, border-color .15s ease;
+  body::after{
+    content:""; position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.04;
+    background-image:repeating-linear-gradient(135deg, #fff 0 1px, transparent 1px 7px);
   }
-  .card:hover { transform: translateY(-3px); border-color: var(--rune-dim); }
-  .card .school { font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; font-weight:600; }
-  .school.conjuration { color: var(--conjuration); }
-  .school.divination { color: var(--divination); }
-  .school.restoration { color: var(--restoration); }
-  .card h3 { font-family: var(--serif); font-size:1.3rem; margin:.4rem 0 .5rem; }
-  .card p { color: var(--muted); font-size:.9rem; margin:0 0 1rem; min-height: 2.6em; }
-  .tier { position:absolute; top:16px; right:16px; font-family:var(--serif); color:var(--rune); font-size:.8rem; }
-  .tier::before { content:"✦ "; }
-  .tags { display:flex; gap:.35rem; flex-wrap:wrap; margin-bottom: .9rem; }
-  .tag { font-size:.7rem; color:var(--muted); border:1px solid var(--line); border-radius:6px; padding:.15rem .45rem; }
-  .cast { width:100%; background:transparent; border:1px solid var(--rune-dim); color:var(--rune); border-radius:9px; padding:.55rem; font-family: ui-monospace, monospace; font-size:.82rem; cursor:pointer; }
-  .cast:hover { background: rgba(201,162,39,.08); }
-  .empty { color:var(--muted); text-align:center; padding:48px 0; grid-column:1/-1; font-family:var(--serif); font-style:italic; }
+  .wrap{max-width:var(--max); margin:0 auto; padding:0 16px; position:relative; z-index:1}
+  @media(min-width:768px){ .wrap{padding:0 64px} }
 
-  footer { border-top:1px solid var(--line); color:var(--muted); font-size:.85rem; padding:28px 0 56px; display:flex; gap:1.2rem; flex-wrap:wrap; justify-content:center; }
-  footer a { color:var(--muted); }
+  a{color:inherit}
+  .label{font-family:var(--alchemist); font-size:12px; line-height:16px; letter-spacing:.1em; text-transform:uppercase}
+
+  header.bar{position:sticky; top:0; z-index:30; backdrop-filter:blur(18px);
+    background:rgba(19,19,21,.8); border-bottom:1px solid rgba(160,142,122,.14)}
+  .bar-in{max-width:var(--max); margin:0 auto; padding:14px 16px; display:flex; align-items:center; justify-content:space-between}
+  @media(min-width:768px){ .bar-in{padding:14px 64px} }
+  .brand{display:flex; align-items:center; gap:.65rem; font-family:var(--sage); font-weight:600; font-size:20px}
+  .brand .seal{width:26px; height:26px; color:var(--ember); filter:drop-shadow(0 0 6px var(--ember-glow))}
+  .bar nav{display:flex; gap:1.4rem; align-items:center}
+  .bar nav a{color:var(--faded-ink); text-decoration:none}
+  .bar nav a.label:hover{color:var(--on-surface)}
+  .bar nav a.gh{color:var(--on-surface-variant)}
+
+  .hero{text-align:center; padding:88px 0 56px; position:relative}
+  .sigil{width:120px; height:120px; margin:0 auto 26px; color:var(--ember); filter:drop-shadow(0 0 14px var(--ember-glow))}
+  .sigil [class^="d"]{fill:none; stroke:currentColor; stroke-width:1; vector-effect:non-scaling-stroke;
+    stroke-dasharray:560; stroke-dashoffset:560; animation:scribe 2.4s ease forwards}
+  .sigil .d2{animation-delay:.3s} .sigil .d3{animation-delay:.6s}
+  @keyframes scribe{to{stroke-dashoffset:0}}
+  .hero .eyebrow{color:var(--ember); margin-bottom:1rem}
+  .hero h1{font-family:var(--sage); font-weight:600; font-size:48px; line-height:56px;
+    letter-spacing:-.02em; margin:0 auto .8rem; max-width:14ch}
+  .hero h1 em{font-style:italic; color:var(--primary)}
+  .hero .lede{font-size:18px; line-height:28px; color:var(--on-surface-variant);
+    max-width:560px; margin:0 auto 2rem}
+  @media(max-width:600px){ .hero{padding:56px 0 40px} .hero h1{font-size:32px; line-height:40px} }
+
+  .scroll{display:inline-flex; align-items:center; gap:.75rem; max-width:100%;
+    background:var(--surface-lowest); border:1px solid var(--outline-variant); border-radius:2px;
+    padding:.55rem .55rem .55rem .9rem; box-shadow:inset 0 2px 6px rgba(0,0,0,.55)}
+  .scroll code{font-family:var(--alchemist); font-size:13px; color:var(--on-surface-variant);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .scroll code .sigil-prompt{color:var(--ember); margin-right:.5rem}
+  .scroll .conjure{flex:none; font-family:var(--alchemist); font-size:11px; letter-spacing:.1em; text-transform:uppercase;
+    background:var(--primary); color:#472a00; border:0; border-radius:2px; padding:.45rem .7rem; cursor:pointer;
+    position:relative; overflow:hidden}
+  .scroll .conjure:hover{box-shadow:0 0 0 1px var(--ember), 0 0 16px var(--ember-glow)}
+  .scroll .conjure.pulse::after{content:""; position:absolute; inset:0; border-radius:2px;
+    background:radial-gradient(circle, rgba(255,255,255,.7), transparent 60%); animation:mana .7s ease-out}
+  @keyframes mana{from{transform:scale(0); opacity:.9} to{transform:scale(3); opacity:0}}
+
+  .div{display:flex; align-items:center; gap:1rem; color:var(--outline-variant); margin:32px auto 8px}
+  .div::before,.div::after{content:""; height:1px; flex:1;
+    background:linear-gradient(90deg,transparent,rgba(160,142,122,.3),transparent)}
+  .div svg{width:18px; height:18px; color:var(--ember)}
+
+  .controls{display:flex; gap:var(--gutter); flex-wrap:wrap; align-items:center; padding-top:24px}
+  .seek{flex:1 1 260px; display:flex; align-items:center; gap:.6rem;
+    background:var(--surface-low); border:1px solid rgba(160,142,122,.2); border-radius:9999px; padding:.6rem 1rem}
+  .seek svg{width:17px; height:17px; color:var(--faded-ink); flex:none}
+  .seek input{flex:1; background:transparent; border:0; outline:none; color:var(--on-surface);
+    font-family:var(--scribe); font-size:15px}
+  .seek input::placeholder{color:var(--faded-ink)}
+  .seek:focus-within{border-color:var(--ember); box-shadow:0 0 0 3px var(--ember-glow)}
+  .seek kbd{font-family:var(--alchemist); font-size:11px; color:var(--faded-ink);
+    border:1px solid rgba(160,142,122,.3); border-radius:4px; padding:.05rem .4rem}
+  .schools{display:flex; gap:.5rem; flex-wrap:wrap}
+  .chip{font-family:var(--alchemist); font-size:12px; letter-spacing:.08em; text-transform:uppercase;
+    background:transparent; border:1px solid rgba(160,142,122,.3); color:var(--faded-ink);
+    border-radius:9999px; padding:.4rem .9rem; cursor:pointer; transition:all .2s}
+  .chip:hover{color:var(--on-surface)}
+  .chip[data-s="all"][aria-pressed="true"]{border-color:var(--ember); color:var(--primary)}
+  .chip[data-s="conjuration"][aria-pressed="true"]{border-color:var(--ember); color:var(--ember)}
+  .chip[data-s="automation"][aria-pressed="true"]{border-color:var(--mana); color:var(--mana)}
+  .chip[data-s="analysis"][aria-pressed="true"]{border-color:var(--arcane); color:var(--arcane)}
+  .count{font-family:var(--alchemist); font-size:12px; letter-spacing:.06em; color:var(--faded-ink); margin:22px 0 24px}
+
+  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:var(--gutter); padding-bottom:96px}
+  .card{position:relative; background:var(--surface-low); border-radius:2px; padding:24px; transition:transform .25s ease}
+  .card .corner{position:absolute; width:14px; height:14px; border:1px solid var(--outline-variant); transition:border-color .25s}
+  .corner.tl{top:0; left:0; border-right:0; border-bottom:0}
+  .corner.tr{top:0; right:0; border-left:0; border-bottom:0}
+  .corner.bl{bottom:0; left:0; border-right:0; border-top:0}
+  .corner.br{bottom:0; right:0; border-left:0; border-top:0}
+  .card::before{content:""; position:absolute; inset:0; border-radius:2px; pointer-events:none; opacity:.05;
+    background-image:repeating-linear-gradient(135deg, #fff 0 1px, transparent 1px 6px)}
+  .card:hover{transform:translateY(-4px)}
+  .card.conjuration:hover .corner{border-color:var(--ember)}
+  .card.automation:hover .corner{border-color:var(--mana)}
+  .card.analysis:hover .corner{border-color:var(--arcane)}
+
+  .srow{display:flex; align-items:center; gap:.6rem; margin-bottom:.85rem}
+  .school{font-family:var(--alchemist); font-size:12px; letter-spacing:.1em; text-transform:uppercase}
+  .conjuration .school{color:var(--ember)} .automation .school{color:var(--mana)} .analysis .school{color:var(--arcane)}
+  .tier{margin-left:auto; font-family:var(--sage); font-style:italic; font-size:15px; color:var(--on-surface-variant)}
+  .card h3{font-family:var(--sage); font-weight:500; font-size:24px; line-height:32px; margin:0 0 .5rem}
+  .card .desc{font-family:var(--scribe); font-style:italic; font-size:14px; line-height:20px;
+    color:var(--faded-ink); margin:0 0 1.1rem; min-height:3.3em}
+  .tags{display:flex; gap:.55rem; flex-wrap:wrap; margin-bottom:1.2rem}
+  .tag{font-family:var(--alchemist); font-size:11px; color:var(--faded-ink); letter-spacing:.04em}
+  .tag::before{content:"//"; margin-right:.35rem; opacity:.4}
+  .cast{width:100%; display:flex; align-items:center; justify-content:center; gap:.5rem;
+    background:transparent; border:1px solid rgba(160,142,122,.3); color:var(--on-surface);
+    border-radius:3px; padding:.7rem; font-family:var(--alchemist); font-size:12px; letter-spacing:.08em;
+    text-transform:uppercase; cursor:pointer; transition:all .2s; position:relative; overflow:hidden}
+  .cast svg{width:14px; height:14px}
+  .cast:hover{border-color:var(--ember); color:var(--primary); box-shadow:inset 0 0 24px var(--ember-glow)}
+  .cast.done{border-color:var(--ember); color:var(--primary)}
+  .cast.pulse::after{content:""; position:absolute; inset:0;
+    background:radial-gradient(circle, rgba(245,158,11,.5), transparent 60%); animation:mana .7s ease-out}
+
+  .empty{grid-column:1/-1; text-align:center; padding:72px 0; font-family:var(--sage); font-style:italic;
+    font-size:24px; color:var(--faded-ink)}
+
+  footer{border-top:1px solid rgba(160,142,122,.14); padding:34px 0 80px; display:flex; gap:1.6rem;
+    flex-wrap:wrap; align-items:center; justify-content:center; font-family:var(--alchemist);
+    font-size:12px; letter-spacing:.06em; color:var(--faded-ink)}
+  footer a{color:var(--on-surface-variant); text-decoration:none}
+  footer a:hover{color:var(--primary)}
+  footer .dot{color:var(--outline-variant)}
+
+  @media(prefers-reduced-motion:reduce){
+    .sigil [class^="d"]{animation:none; stroke-dashoffset:0}
+    .pulse::after{animation:none; display:none}
+    html{scroll-behavior:auto}
+  }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header class="top">
-    <div class="brand"><span class="sigil">✶</span> The Spell Book</div>
+<header class="bar">
+  <div class="bar-in">
+    <div class="brand">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true">
+        <circle cx="20" cy="20" r="18" fill="none" stroke="currentColor" stroke-width="1.3"/>
+        <polygon points="20,7 30.4,26 9.6,26" fill="none" stroke="currentColor" stroke-width="1"/>
+        <polygon points="20,33 9.6,14 30.4,14" fill="none" stroke="currentColor" stroke-width="1"/>
+      </svg>
+      The Spell Book
+    </div>
     <nav>
-      <a href="#grimoire">Grimoire</a>
-      <a id="repo-link" href="#" target="_blank" rel="noopener">GitHub ↗</a>
+      <a href="#grimoire" class="label">The grimoire</a>
+      <a id="repo-top" class="gh label" href="#" target="_blank" rel="noopener">GitHub ↗</a>
     </nav>
-  </header>
+  </div>
+</header>
 
+<div class="wrap">
   <section class="hero">
-    <div class="kicker">A personal grimoire</div>
-    <h1>Cast a spell on your <em>workflow</em>.</h1>
-    <p>Each spell is a skill, chain, or tool. Add one to your agent and it can suddenly do something it couldn't before. Browse the grimoire and cast what you need.</p>
-    <div class="install" id="install">
-      <code>/plugin marketplace add YOUR_GITHUB_USERNAME/spellbook</code>
-      <span class="copied" id="copied" hidden>copied ✓</span>
+    <svg class="sigil" viewBox="0 0 120 120" aria-hidden="true">
+      <circle class="d1" cx="60" cy="60" r="54"/>
+      <circle class="d2" cx="60" cy="60" r="40"/>
+      <polygon class="d2" points="60,12 102,84 18,84"/>
+      <polygon class="d3" points="60,108 18,36 102,36"/>
+      <circle class="d3" cx="60" cy="60" r="6"/>
+    </svg>
+    <p class="eyebrow label">A personal grimoire</p>
+    <h1>Cast a spell on your <em>workflow</em></h1>
+    <p class="lede">Every spell is a skill, a chain, or a tool. Inscribe one into your agent and it can do what it couldn't a moment before. Open the grimoire and take what you need.</p>
+    <div class="scroll" id="scroll">
+      <code><span class="sigil-prompt">›</span><span id="scroll-cmd">/plugin marketplace add YOUR_USERNAME/spellbook</span></code>
+      <button class="conjure" id="conjure" type="button">Copy</button>
     </div>
   </section>
 
+  <div class="div" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/></svg>
+  </div>
+
   <section id="grimoire">
     <div class="controls">
-      <label class="search">🔍 <input id="q" type="search" placeholder="Search spells…  (press /)" /></label>
+      <label class="seek">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input id="seek" type="search" placeholder="Search the grimoire by name, rune, or effect" aria-label="Search spells" />
+        <kbd>/</kbd>
+      </label>
       <div class="schools" id="schools"></div>
     </div>
+    <p class="count" id="count"></p>
     <div class="grid" id="grid"></div>
   </section>
 
   <footer>
-    <a id="repo-link2" href="#" target="_blank" rel="noopener">GitHub</a>
-    <a href="https://agentskills.io" target="_blank" rel="noopener">SKILL.md Spec</a>
-    <span>Your spells, your rules.</span>
+    <a id="repo-foot" href="#" target="_blank" rel="noopener">GitHub</a>
+    <span class="dot">✦</span>
+    <a href="https://agentskills.io" target="_blank" rel="noopener">SKILL.md spec</a>
+    <span class="dot">✦</span>
+    <span>Your spells. Your rules.</span>
   </footer>
 </div>
 
 <script>
-const REPO = "YOUR_GITHUB_USERNAME/spellbook"; // <-- edit this
-document.getElementById("repo-link").href =
-document.getElementById("repo-link2").href = "https://github.com/" + REPO;
+  // ---- edit this one line after you create the repo ----
+  const REPO = "YOUR_USERNAME/spellbook";
 
-const grid = document.getElementById("grid");
-const q = document.getElementById("q");
-const schoolsBox = document.getElementById("schools");
-let spells = [], activeSchool = "all";
+  // Spells are loaded from spells.json so adding a spell never means editing this file.
+  let SPELLS = [];
 
-const installEl = document.getElementById("install");
-installEl.addEventListener("click", () => {
-  navigator.clipboard?.writeText("/plugin marketplace add " + REPO);
-  const c = document.getElementById("copied"); c.hidden = false;
-  setTimeout(() => c.hidden = true, 1500);
-});
+  for (const id of ["repo-top","repo-foot"]) document.getElementById(id).href = "https://github.com/" + REPO;
+  document.getElementById("scroll-cmd").textContent = "/plugin marketplace add " + REPO;
 
-document.addEventListener("keydown", e => {
-  if (e.key === "/" && document.activeElement !== q) { e.preventDefault(); q.focus(); }
-});
+  const grid = document.getElementById("grid");
+  const seek = document.getElementById("seek");
+  const schoolsBox = document.getElementById("schools");
+  const countEl = document.getElementById("count");
+  let activeSchool = "all";
 
-function render() {
-  const term = q.value.trim().toLowerCase();
-  const list = spells.filter(s => {
-    const matchSchool = activeSchool === "all" || s.school === activeSchool;
-    const hay = (s.name + " " + s.description + " " + (s.tags||[]).join(" ")).toLowerCase();
-    return matchSchool && hay.includes(term);
+  const conjure = document.getElementById("conjure");
+  conjure.addEventListener("click", ()=>{
+    navigator.clipboard?.writeText("/plugin marketplace add " + REPO);
+    conjure.textContent = "Copied"; conjure.classList.add("pulse");
+    setTimeout(()=>{ conjure.textContent = "Copy"; conjure.classList.remove("pulse"); }, 1500);
   });
-  grid.innerHTML = list.length ? "" : '<div class="empty">No spell answers that call. Try another search.</div>';
-  for (const s of list) {
-    const card = document.createElement("div");
-    card.className = "card";
-    card.innerHTML = `
-      <span class="tier">Tier ${s.tier}</span>
-      <div class="school ${s.school}">${s.school}</div>
-      <h3>${s.name}</h3>
-      <p>${s.description}</p>
-      <div class="tags">${(s.tags||[]).map(t=>`<span class="tag">${t}</span>`).join("")}</div>
-      <button class="cast" data-slug="${s.slug}">/${s.slug} — copy cast command</button>`;
-    card.querySelector(".cast").addEventListener("click", ev => {
-      navigator.clipboard?.writeText("/plugin install " + s.slug + "@spellbook");
-      ev.target.textContent = "copied ✓"; setTimeout(()=>ev.target.textContent = "/"+s.slug+" — copy cast command", 1500);
-    });
-    grid.appendChild(card);
-  }
-}
 
-fetch("spells.json").then(r=>r.json()).then(d=>{
-  spells = d.spells;
-  const schools = ["all", ...new Set(spells.map(s=>s.school))];
-  schoolsBox.innerHTML = schools.map(s=>`<button class="chip" data-s="${s}" aria-pressed="${s==='all'}">${s}</button>`).join("");
-  schoolsBox.querySelectorAll(".chip").forEach(b=>b.addEventListener("click",()=>{
-    activeSchool = b.dataset.s;
-    schoolsBox.querySelectorAll(".chip").forEach(x=>x.setAttribute("aria-pressed", x===b));
+  document.addEventListener("keydown", e=>{
+    if(e.key==="/" && document.activeElement!==seek){ e.preventDefault(); seek.focus(); }
+  });
+
+  function buildSchools(){
+    const schools = ["all", ...new Set(SPELLS.map(s=>s.school))];
+    schoolsBox.innerHTML = schools.map(s=>
+      `<button class="chip" data-s="${s}" aria-pressed="${s==='all'}">${s}</button>`).join("");
+    schoolsBox.querySelectorAll(".chip").forEach(b=>b.addEventListener("click",()=>{
+      activeSchool = b.dataset.s;
+      schoolsBox.querySelectorAll(".chip").forEach(x=>x.setAttribute("aria-pressed", x===b));
+      render();
+    }));
+  }
+
+  function render(){
+    const term = seek.value.trim().toLowerCase();
+    const list = SPELLS.filter(s=>{
+      const okSchool = activeSchool==="all" || s.school===activeSchool;
+      const hay = (s.name+" "+s.description+" "+s.tags.join(" ")+" "+s.school).toLowerCase();
+      return okSchool && hay.includes(term);
+    });
+
+    countEl.textContent = list.length ? `${list.length} spell${list.length>1?"s":""} inscribed` : "";
+
+    if(!list.length){
+      grid.innerHTML = '<p class="empty">No spell answers that call. Try another word.</p>';
+      return;
+    }
+    grid.innerHTML = "";
+    for(const s of list){
+      const card = document.createElement("article");
+      card.className = "card " + s.school;
+      card.innerHTML = `
+        <span class="corner tl"></span><span class="corner tr"></span>
+        <span class="corner bl"></span><span class="corner br"></span>
+        <div class="srow">
+          <span class="school">${s.school}</span>
+          <span class="tier">Tier ${s.tier}</span>
+        </div>
+        <h3>${s.name}</h3>
+        <p class="desc">${s.description}</p>
+        <div class="tags">${s.tags.map(t=>`<span class="tag">${t}</span>`).join("")}</div>
+        <button class="cast" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          Cast — copy install
+        </button>`;
+      const btn = card.querySelector(".cast");
+      btn.addEventListener("click", ()=>{
+        navigator.clipboard?.writeText("/plugin install " + s.slug + "@spellbook");
+        btn.classList.add("done","pulse");
+        btn.innerHTML = '✦ Copied to your hand';
+        setTimeout(()=>{ btn.classList.remove("done","pulse");
+          btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg> Cast — copy install';
+        }, 1500);
+      });
+      grid.appendChild(card);
+    }
+  }
+
+  async function summon(){
+    countEl.textContent = "Unrolling the grimoire…";
+    try{
+      const res = await fetch("spells.json", { cache: "no-cache" });
+      if(!res.ok) throw new Error("status " + res.status);
+      const data = await res.json();
+      SPELLS = Array.isArray(data) ? data : (data.spells || []);
+    }catch(err){
+      console.error("Could not load spells.json:", err);
+      schoolsBox.innerHTML = "";
+      countEl.textContent = "";
+      grid.innerHTML = '<p class="empty">The grimoire would not open. Check that spells.json sits beside this page.</p>';
+      return;
+    }
+    buildSchools();
     render();
-  }));
-  render();
-});
-q.addEventListener("input", render);
+  }
+
+  summon();
 </script>
 </body>
 </html>
