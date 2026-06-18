@@ -14,17 +14,18 @@ Built as an installable Claude Code plugin marketplace with a GitHub Pages disco
 .claude-plugin/marketplace.json   # makes the repo installable
 spells/<spell>/SKILL.md           # each spell (agentskills.io spec)
 docs/index.html                   # the discovery page (Pages)
-docs/spells.json                  # registry the page reads
+docs/spells.js                    # registry the page reads (loaded as a script so it works on file:// too)
 ```
 
 ## Add a new spell
 1. Create `spells/<slug>/SKILL.md` with frontmatter (`name`, `description`, `school`, `tier`).
 2. Register it in `.claude-plugin/marketplace.json`.
-3. Add an entry to `docs/spells.json` so it appears on the site.
+3. Add an entry to `docs/spells.js` so it appears on the site.
 
-## Schools of magic (just categories)
-- **conjuration** — creates new artifacts (PRs, scaffolds)
-- **divination** — investigates / reveals (debugging, analysis)
-- **restoration** — fixes / heals (tests, refactors)
+## Schools (just categories)
+The `school` field is a plain category used for grouping and filter colors on the site:
+- **git** — version-control workflows (PRs, branches)
+- **debugging** — investigates / reveals (logs, stack traces)
+- **testing** — fixes / verifies (failing suites, assertions)
 
 Invent your own. They're only tags with colors.

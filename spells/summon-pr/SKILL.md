@@ -1,7 +1,7 @@
 ---
 name: summon-pr
 description: Conjure a polished pull request from staged changes — title, summary, and a test plan. Use when the user wants to open a PR, write a PR description, or summarize a branch of work.
-school: conjuration
+school: git
 tier: 2
 ---
 

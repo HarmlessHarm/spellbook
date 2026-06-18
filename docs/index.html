@@ -120,9 +120,9 @@
     border-radius:9999px; padding:.4rem .9rem; cursor:pointer; transition:all .2s}
   .chip:hover{color:var(--on-surface)}
   .chip[data-s="all"][aria-pressed="true"]{border-color:var(--ember); color:var(--primary)}
-  .chip[data-s="conjuration"][aria-pressed="true"]{border-color:var(--ember); color:var(--ember)}
-  .chip[data-s="automation"][aria-pressed="true"]{border-color:var(--mana); color:var(--mana)}
-  .chip[data-s="analysis"][aria-pressed="true"]{border-color:var(--arcane); color:var(--arcane)}
+  .chip[data-s="git"][aria-pressed="true"]{border-color:var(--ember); color:var(--ember)}
+  .chip[data-s="debugging"][aria-pressed="true"]{border-color:var(--mana); color:var(--mana)}
+  .chip[data-s="testing"][aria-pressed="true"]{border-color:var(--arcane); color:var(--arcane)}
   .count{font-family:var(--alchemist); font-size:12px; letter-spacing:.06em; color:var(--faded-ink); margin:22px 0 24px}
 
   .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:var(--gutter); padding-bottom:96px}
@@ -135,13 +135,13 @@
   .card::before{content:""; position:absolute; inset:0; border-radius:2px; pointer-events:none; opacity:.05;
     background-image:repeating-linear-gradient(135deg, #fff 0 1px, transparent 1px 6px)}
   .card:hover{transform:translateY(-4px)}
-  .card.conjuration:hover .corner{border-color:var(--ember)}
-  .card.automation:hover .corner{border-color:var(--mana)}
-  .card.analysis:hover .corner{border-color:var(--arcane)}
+  .card.git:hover .corner{border-color:var(--ember)}
+  .card.debugging:hover .corner{border-color:var(--mana)}
+  .card.testing:hover .corner{border-color:var(--arcane)}
 
   .srow{display:flex; align-items:center; gap:.6rem; margin-bottom:.85rem}
   .school{font-family:var(--alchemist); font-size:12px; letter-spacing:.1em; text-transform:uppercase}
-  .conjuration .school{color:var(--ember)} .automation .school{color:var(--mana)} .analysis .school{color:var(--arcane)}
+  .git .school{color:var(--ember)} .debugging .school{color:var(--mana)} .testing .school{color:var(--arcane)}
   .tier{margin-left:auto; font-family:var(--sage); font-style:italic; font-size:15px; color:var(--on-surface-variant)}
   .card h3{font-family:var(--sage); font-weight:500; font-size:24px; line-height:32px; margin:0 0 .5rem}
   .card .desc{font-family:var(--scribe); font-style:italic; font-size:14px; line-height:20px;
@@ -238,12 +238,13 @@
   </footer>
 </div>
 
+<script src="spells.js"></script>
 <script>
   // ---- edit this one line after you create the repo ----
   const REPO = "YOUR_USERNAME/spellbook";
 
-  // Spells are loaded from spells.json so adding a spell never means editing this file.
-  let SPELLS = [];
+  // Spells live in spells.js (loaded above) so adding a spell never means editing this file.
+  let SPELLS = Array.isArray(window.SPELLS) ? window.SPELLS : [];
 
   for (const id of ["repo-top","repo-foot"]) document.getElementById(id).href = "https://github.com/" + REPO;
   document.getElementById("scroll-cmd").textContent = "/plugin marketplace add " + REPO;
@@ -264,6 +265,8 @@
   document.addEventListener("keydown", e=>{
     if(e.key==="/" && document.activeElement!==seek){ e.preventDefault(); seek.focus(); }
   });
+
+  seek.addEventListener("input", render);
 
   function buildSchools(){
     const schools = ["all", ...new Set(SPELLS.map(s=>s.school))];
@@ -321,18 +324,11 @@
     }
   }
 
-  async function summon(){
-    countEl.textContent = "Unrolling the grimoire…";
-    try{
-      const res = await fetch("spells.json", { cache: "no-cache" });
-      if(!res.ok) throw new Error("status " + res.status);
-      const data = await res.json();
-      SPELLS = Array.isArray(data) ? data : (data.spells || []);
-    }catch(err){
-      console.error("Could not load spells.json:", err);
+  function summon(){
+    if(!SPELLS.length){
       schoolsBox.innerHTML = "";
       countEl.textContent = "";
-      grid.innerHTML = '<p class="empty">The grimoire would not open. Check that spells.json sits beside this page.</p>';
+      grid.innerHTML = '<p class="empty">The grimoire would not open. Check that spells.js sits beside this page.</p>';
       return;
     }
     buildSchools();

@@ -1,7 +1,7 @@
 ---
 name: scry-logs
 description: Peer into noisy logs and divine the root cause. Use when the user pastes a stack trace, error output, or asks why something is failing.
-school: divination
+school: debugging
 tier: 1
 ---
 
