@@ -1,10 +1,10 @@
 ---
 name: summon-pr
+title: Summon Pull Request
 description: Conjure a polished pull request from staged changes — title, summary, and a test plan. Use when the user wants to open a PR, write a PR description, or summarize a branch of work.
-school: git
+category: git
+tags: [git, pull-request, review]
 ---
-
-# Summon Pull Request
 
 Cast this to materialize a clean PR from work-in-progress.
 

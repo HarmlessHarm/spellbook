@@ -1,7 +1,7 @@
 {
   "name": "spellbook",
   "owner": {
-    "name": "YOUR_GITHUB_USERNAME"
+    "name": "harmlessharm"
   },
   "metadata": {
     "description": "A personal grimoire of spells — skills, chains, and tools to cast over your workflows.",
@@ -10,17 +10,17 @@
   "plugins": [
     {
       "name": "summon-pr",
-      "source": "./spells/summon-pr",
+      "source": "./skills/git/summon-pr",
       "description": "Conjure a polished pull request from your staged changes — title, summary, and test plan."
     },
     {
       "name": "scry-logs",
-      "source": "./spells/scry-logs",
+      "source": "./skills/debugging/scry-logs",
       "description": "Peer into noisy logs and divine the root cause."
     },
     {
       "name": "mend-tests",
-      "source": "./spells/mend-tests",
+      "source": "./skills/testing/mend-tests",
       "description": "Repair failing tests without silently weakening assertions."
     }
   ]

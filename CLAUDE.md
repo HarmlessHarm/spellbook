@@ -24,51 +24,75 @@ Three ways a user can take something. Each type supports a different subset — 
 
 ## Layout
 
-Group by type at the top level so the repo stays scannable and `npx skills` finds skills where it expects them:
-
 ```
-.claude-plugin/marketplace.json   # makes the repo installable as a plugin marketplace
-skills/<category>/<slug>/SKILL.md # skills, catalog layout — category in the path (npx-skills compatible)
+.claude-plugin/marketplace.json   # plugin marketplace registry
+skills/<category>/<slug>/SKILL.md # skills — category in path (npx-skills compatible)
 commands/<slug>/                  # slash commands
 agents/<slug>/                    # subagents
 mcps/<slug>/                      # MCP servers
 tools/<slug>/                     # standalone tools
 scripts/<slug>/                   # scripts
-docs/index.html                   # the discovery site (served by GitHub Pages)
-docs/spells.js                    # the registry the site reads
+src/                              # Astro site source
+  content/config.ts               # content collection (reads from skills/)
+  layouts/Layout.astro
+  pages/index.astro
+  pages/spells/[slug].astro
+  components/SpellCard.astro
+astro.config.mjs
+package.json
+.github/workflows/deploy.yml      # GitHub Actions → Pages
 ```
 
 Category is a plain grouping/filter tag (e.g. `git`, `debugging`, `testing`). For skills it lives in the path (`skills/<category>/<slug>/`); for other types it's a field in the registry. Invent categories freely.
 
-> **Note — not yet migrated.** The code currently uses a single `spells/` directory and a `school` field. Moving to the per-type layout above and renaming `school` → `category`/`type` (in `SKILL.md` frontmatter, `marketplace.json`, `docs/spells.js`, and the labels/filter colors in `docs/index.html`) is pending work.
+## SKILL.md frontmatter
 
-## A spell exists in two worlds — keep them in sync
+Each skill file uses this schema (used by both `npx skills` and the Astro content collection):
 
-1. **Installable** — the real artifact on disk (`skills/<category>/<slug>/SKILL.md`, `commands/<slug>/…`, etc.) plus, for plugin-installable types, an entry in `marketplace.json`.
-2. **Discoverable** — an entry in `docs/spells.js` (with a `body` mirroring the SKILL.md instructions) so it shows on the site and gets a page at `#<slug>`.
+```yaml
+---
+name: summon-pr          # slug — used in URLs and install commands
+title: Summon Pull Request  # display name shown on the site
+description: ...         # one-line description, shown on cards
+category: git            # grouping tag; also lives in the directory path
+tags: [git, pull-request, review]
+---
+```
 
-These are maintained by hand and drift easily. When you add or change something, update the artifact, `marketplace.json` (if plugin-installable), and `docs/spells.js` together. The `body` in `spells.js` is a copy of the instructions — keep it matching the source.
+## A skill exists in two places — keep them in sync
 
-## Per-spell copy options on the site
+1. **Installable** — `skills/<category>/<slug>/SKILL.md` plus an entry in `marketplace.json`.
+2. **Discoverable** — automatically read by the Astro site via the content collection. No separate registry file needed.
 
-Each spell page offers copy-to-clipboard install commands. Show the ones that apply to its type:
+When you add or change a skill, update the SKILL.md and `marketplace.json` together. The Astro site picks up changes at the next build.
 
-- `/plugin install <slug>@spellbook` — **already in code**.
-- `npx skills add <repo-url>/tree/main/skills/<category>/<slug>` — **skills only; documented here, not yet implemented in `docs/index.html`.** Add this as a second copy option for skills.
+## Per-skill copy options on the site
 
-## Local verification before deploy
+Each spell page shows two install commands:
 
-"Deploy" = push to `main` → GitHub Pages publishes `docs/`. Verify locally first:
+- `/plugin install <slug>@spellbook` — for Claude Code plugin install
+- `npx skills add <repo-url>/tree/main/skills/<category>/<slug>` — skills only
 
-- The site is built to run from `file://` — `spells.js` is loaded as a `<script>` (not `fetch`ed) precisely so opening `docs/index.html` directly in a browser works. Open it and confirm new entries render, search/filter work, the detail page (`#<slug>`) looks right, and copy buttons produce the correct commands.
-- Sanity-check `marketplace.json` is valid JSON.
+## Local development and deploy
 
-Only push to `main` once the site looks correct, since that push is the deploy.
+The site is built with Astro and deployed to GitHub Pages via GitHub Actions.
 
-## Known placeholders
+```bash
+npm install        # first time
+npm run dev        # local dev server at localhost:4321/spellbook/
+npm run build      # build to dist/
+npm run preview    # preview the built site locally
+```
 
-`YOUR_GITHUB_USERNAME` (in `marketplace.json`) and `YOUR_USERNAME` (the `REPO` const in `docs/index.html`) must be replaced with the real GitHub repo before any install command or GitHub link works.
+Push to `main` → GitHub Actions builds and deploys automatically.
 
-## Possible future: Astro
+**One-time setup:** In the GitHub repo settings → Pages, set the source to **GitHub Actions** (not "Deploy from a branch").
 
-The site is intentionally a single hand-written HTML file today. If it outgrows that, Astro is the leading candidate for a build step + local dev server, deployed to Pages via GitHub Actions (https://docs.astro.build/en/guides/deploy/github/). Not adopted yet — don't assume a build step exists until this section says so.
+Sanity-check `marketplace.json` is valid JSON before pushing.
+
+## Adding a new skill
+
+1. Create `skills/<category>/<slug>/SKILL.md` with the frontmatter schema above.
+2. Add an entry to `.claude-plugin/marketplace.json`.
+3. Run `npm run dev` to confirm the card and detail page render correctly.
+4. Push to `main` to deploy.

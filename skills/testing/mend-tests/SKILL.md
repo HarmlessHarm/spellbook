@@ -1,10 +1,10 @@
 ---
 name: mend-tests
-description: Repair failing tests without weakening assertions. Use when tests are red and the user wants them green honestly.
-school: testing
+title: Mend Tests
+description: Repair a failing suite without silently weakening or skipping assertions.
+category: testing
+tags: [testing, debugging, ci]
 ---
-
-# Mend Tests
 
 Cast this to heal a failing suite — honestly.
 

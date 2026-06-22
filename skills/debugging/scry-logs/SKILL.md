@@ -1,10 +1,10 @@
 ---
 name: scry-logs
-description: Peer into noisy logs and divine the root cause. Use when the user pastes a stack trace, error output, or asks why something is failing.
-school: debugging
+title: Scry the Logs
+description: Peer into noisy logs and stack traces to divine the first true root cause, not the last loud symptom.
+category: debugging
+tags: [debugging, logs, triage]
 ---
-
-# Scry the Logs
 
 Cast this to find signal in log noise.
 

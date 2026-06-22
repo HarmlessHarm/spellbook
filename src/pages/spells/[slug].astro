@@ -1,0 +1,53 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+export async function getStaticPaths() {
+  const skills = await getCollection('skills');
+  return skills.map(entry => ({
+    params: { slug: entry.data.name },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const { name, title, description, category, tags = [] } = entry.data;
+const installCmd = `/plugin install ${name}@spellbook`;
+const base = import.meta.env.BASE_URL;
+---
+
+<Layout title={`${title} — The Spell Book`} description={description}>
+  <section id="spell-page">
+    <a class="back" href={base}>← Back to the grimoire</a>
+    <article class={`spell-detail ${category}`}>
+      <div class="srow">
+        <span class="school">{category}</span>
+      </div>
+      <h1>{title}</h1>
+      <p class="lede">{description}</p>
+      <div class="tags">
+        {tags.map(tag => <span class="tag">{tag}</span>)}
+      </div>
+      <div class="scroll">
+        <code><span class="sigil-prompt">›</span>{installCmd}</code>
+        <button class="conjure" type="button" id="copy-install">Copy</button>
+      </div>
+      <div class="spell-body">
+        <Content />
+      </div>
+    </article>
+  </section>
+</Layout>
+
+<script define:vars={{ installCmd }}>
+  document.getElementById('copy-install')?.addEventListener('click', function () {
+    navigator.clipboard?.writeText(installCmd);
+    this.textContent = 'Copied';
+    this.classList.add('pulse');
+    setTimeout(() => {
+      this.textContent = 'Copy';
+      this.classList.remove('pulse');
+    }, 1500);
+  });
+</script>

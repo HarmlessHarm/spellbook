@@ -1,0 +1,164 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import SpellCard from '../components/SpellCard.astro';
+
+const skills = await getCollection('skills');
+const categories = ['all', ...new Set(skills.map(s => s.data.category))];
+const installCmd = '/plugin marketplace add harmlessharm/spellbook';
+---
+
+<Layout>
+  <section class="hero" id="hero">
+    <svg class="sigil" viewBox="0 0 120 120" aria-hidden="true">
+      <circle class="d1" cx="60" cy="60" r="54"/>
+      <circle class="d2" cx="60" cy="60" r="40"/>
+      <polygon class="d2" points="60,12 102,84 18,84"/>
+      <polygon class="d3" points="60,108 18,36 102,36"/>
+      <circle class="d3" cx="60" cy="60" r="6"/>
+    </svg>
+    <p class="eyebrow label">A personal grimoire</p>
+    <h1>Cast a spell on your <em>workflow</em></h1>
+    <p class="lede">Every spell is a skill, a chain, or a tool. Inscribe one into your agent and it can do what it couldn't a moment before. Open the grimoire and take what you need.</p>
+    <div class="scroll">
+      <code><span class="sigil-prompt">›</span>{installCmd}</code>
+      <button class="conjure" type="button" id="conjure">Copy</button>
+    </div>
+  </section>
+
+  <div class="div" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+      <path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/>
+    </svg>
+  </div>
+
+  <section id="grimoire">
+    <div class="controls">
+      <label class="seek">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+          <circle cx="11" cy="11" r="7"/>
+          <path d="M21 21l-4.3-4.3"/>
+        </svg>
+        <input id="seek" type="search" placeholder="Search the grimoire by name, rune, or effect" aria-label="Search spells" />
+        <kbd>/</kbd>
+      </label>
+      <div class="categories" id="categories">
+        {categories.map(cat => (
+          <button class="chip" data-cat={cat} aria-pressed={cat === 'all' ? 'true' : 'false'}>
+            {cat}
+          </button>
+        ))}
+      </div>
+    </div>
+    <p class="count" id="count">{skills.length} spell{skills.length !== 1 ? 's' : ''} inscribed</p>
+    <div class="grid" id="grid">
+      {skills.map(skill => <SpellCard skill={skill} />)}
+      <p class="empty" id="empty" hidden>No spell answers that call. Try another word.</p>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero {
+    text-align: center;
+    padding: 88px 0 56px;
+    position: relative;
+  }
+
+  .sigil {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 26px;
+    color: var(--ember);
+    filter: drop-shadow(0 0 14px var(--ember-glow));
+  }
+
+  .sigil [class^="d"] {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+    stroke-dasharray: 560;
+    stroke-dashoffset: 560;
+    animation: scribe 2.4s ease forwards;
+  }
+
+  .sigil .d2 { animation-delay: 0.3s }
+  .sigil .d3 { animation-delay: 0.6s }
+
+  @keyframes scribe { to { stroke-dashoffset: 0 } }
+
+  .hero .eyebrow { color: var(--ember); margin-bottom: 1rem }
+
+  .hero h1 {
+    font-family: var(--sage);
+    font-weight: 600;
+    font-size: 48px;
+    line-height: 56px;
+    letter-spacing: -0.02em;
+    margin: 0 auto 0.8rem;
+    max-width: 14ch;
+  }
+
+  .hero h1 em { font-style: italic; color: var(--primary) }
+
+  .hero .lede {
+    font-size: 18px;
+    line-height: 28px;
+    color: var(--on-surface-variant);
+    max-width: 560px;
+    margin: 0 auto 2rem;
+  }
+</style>
+
+<script define:vars={{ installCmd }}>
+  const conjure = document.getElementById('conjure');
+  conjure?.addEventListener('click', () => {
+    navigator.clipboard?.writeText(installCmd);
+    conjure.textContent = 'Copied';
+    conjure.classList.add('pulse');
+    setTimeout(() => {
+      conjure.textContent = 'Copy';
+      conjure.classList.remove('pulse');
+    }, 1500);
+  });
+
+  const seek = document.getElementById('seek');
+  const countEl = document.getElementById('count');
+  const emptyEl = document.getElementById('empty');
+  const cards = Array.from(document.querySelectorAll('.card[data-category]'));
+  let activeCat = 'all';
+
+  document.addEventListener('keydown', e => {
+    if (e.key === '/' && document.activeElement !== seek) {
+      e.preventDefault();
+      seek?.focus();
+    }
+  });
+
+  seek?.addEventListener('input', filter);
+
+  document.getElementById('categories')?.querySelectorAll('.chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeCat = btn.getAttribute('data-cat') ?? 'all';
+      document.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', String(c === btn)));
+      filter();
+    });
+  });
+
+  function filter() {
+    const term = (seek?.value ?? '').trim().toLowerCase();
+    let visible = 0;
+
+    cards.forEach(card => {
+      const matchCat = activeCat === 'all' || card.getAttribute('data-category') === activeCat;
+      const matchSearch = !term || (card.getAttribute('data-search') ?? '').includes(term);
+      const show = matchCat && matchSearch;
+      card.toggleAttribute('hidden', !show);
+      if (show) visible++;
+    });
+
+    if (countEl) countEl.textContent = visible ? `${visible} spell${visible !== 1 ? 's' : ''} inscribed` : '';
+    if (emptyEl) emptyEl.hidden = visible > 0;
+  }
+</script>
