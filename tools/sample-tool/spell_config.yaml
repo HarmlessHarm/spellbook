@@ -1,0 +1,7 @@
+name: sample-tool
+title: Sample Tool
+type: tool
+category: util
+version: "0.1.0"
+tags: [tool, sample]
+entrypoint: tool.sh
