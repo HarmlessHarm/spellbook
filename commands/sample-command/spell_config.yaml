@@ -1,0 +1,6 @@
+name: sample-command
+title: Sample Command
+type: command
+category: git
+version: "0.1.0"
+tags: [command, sample]
