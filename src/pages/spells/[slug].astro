@@ -1,20 +1,22 @@
 ---
-import { getCollection, render } from 'astro:content';
+import { getSpells } from '../../lib/spells';
+import { installCommand } from '../../lib/install';
+import { render } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 
 export async function getStaticPaths() {
-  const skills = await getCollection('skills');
-  return skills.map(entry => ({
-    params: { slug: entry.data.name },
-    props: { entry },
+  const spells = await getSpells();
+  return spells.map(spell => ({
+    params: { slug: spell.name },
+    props: { spell },
   }));
 }
 
-const { entry } = Astro.props;
-const { Content } = await render(entry);
-const { name, title, description, category, tags = [] } = entry.data;
-const installCmd = `/plugin install ${name}@spellbook`;
+const { spell } = Astro.props;
+const { name, title, description, type, category, version, tags = [], entrypoint } = spell;
+const cmd = installCommand({ type, name, entrypoint });
 const base = import.meta.env.BASE_URL;
+const { Content } = spell.bodyEntry ? await render(spell.bodyEntry) : { Content: null };
 ---
 
 <Layout title={`${title} — The Spell Book`} description={description}>
@@ -23,31 +25,21 @@ const base = import.meta.env.BASE_URL;
     <article class={`spell-detail ${category}`}>
       <div class="srow">
         <span class="school">{category}</span>
+        <span class="type-badge">{type}</span>
       </div>
       <h1>{title}</h1>
+      <p class="version" style="margin: 0.2rem 0 0.8rem">v{version}</p>
       <p class="lede">{description}</p>
       <div class="tags">
         {tags.map(tag => <span class="tag">{tag}</span>)}
       </div>
-      <div class="scroll">
-        <code><span class="sigil-prompt">›</span>{installCmd}</code>
-        <button class="conjure" type="button" id="copy-install">Copy</button>
+      <div class="scroll" style="margin-top: 1.4rem" data-cmd={cmd}>
+        <code><span class="sigil-prompt">›</span>{cmd}</code>
+        <button class="conjure js-copy" type="button">Copy</button>
       </div>
       <div class="spell-body">
-        <Content />
+        {Content && <Content />}
       </div>
     </article>
   </section>
 </Layout>
-
-<script define:vars={{ installCmd }}>
-  document.getElementById('copy-install')?.addEventListener('click', function () {
-    navigator.clipboard?.writeText(installCmd);
-    this.textContent = 'Copied';
-    this.classList.add('pulse');
-    setTimeout(() => {
-      this.textContent = 'Copy';
-      this.classList.remove('pulse');
-    }, 1500);
-  });
-</script>

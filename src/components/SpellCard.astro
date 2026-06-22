@@ -1,21 +1,23 @@
 ---
-import type { CollectionEntry } from 'astro:content';
+import type { MergedSpell } from '../lib/spells';
+import { installCommand } from '../lib/install';
 
 interface Props {
-  skill: CollectionEntry<'skills'>;
+  spell: MergedSpell;
 }
 
-const { skill } = Astro.props;
-const { name, title, description, category, tags = [] } = skill.data;
+const { spell } = Astro.props;
+const { name, title, description, type, category, version, tags = [], entrypoint } = spell;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const href = `${base}/spells/${name}/`;
-const installCmd = `/plugin install ${name}@spellbook`;
+const cmd = installCommand({ type, name, entrypoint });
 ---
 
 <article
   class={`card ${category}`}
   data-category={category}
-  data-search={`${title} ${description} ${tags.join(' ')} ${category}`.toLowerCase()}
+  data-type={type}
+  data-search={`${title} ${description} ${tags.join(' ')} ${category} ${type}`.toLowerCase()}
 >
   <span class="corner tl"></span>
   <span class="corner tr"></span>
@@ -24,14 +26,16 @@ const installCmd = `/plugin install ${name}@spellbook`;
   <a href={href} class="card-link">
     <div class="srow">
       <span class="school">{category}</span>
+      <span class="type-badge">{type}</span>
     </div>
     <h3>{title}</h3>
+    <p class="version">v{version}</p>
     <p class="desc">{description}</p>
     <div class="tags">
       {tags.map(tag => <span class="tag">{tag}</span>)}
     </div>
   </a>
-  <button class="cast" type="button" data-cmd={installCmd}>
+  <button class="cast js-copy" type="button" data-cmd={cmd}>
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
       <path d="M5 12h14M13 6l6 6-6 6"/>
     </svg>
@@ -42,6 +46,7 @@ const installCmd = `/plugin install ${name}@spellbook`;
 <style>
   .card-link {
     display: block;
+    flex: 1 1 auto;
     text-decoration: none;
     color: inherit;
     outline: none;
@@ -53,18 +58,3 @@ const installCmd = `/plugin install ${name}@spellbook`;
     border-radius: 2px;
   }
 </style>
-
-<script>
-  document.querySelectorAll<HTMLButtonElement>('.cast[data-cmd]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const cmd = btn.dataset.cmd ?? '';
-      navigator.clipboard?.writeText(cmd);
-      btn.classList.add('done', 'pulse');
-      btn.innerHTML = '✦ Copied to your hand';
-      setTimeout(() => {
-        btn.classList.remove('done', 'pulse');
-        btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg> Cast — copy install`;
-      }, 1500);
-    });
-  });
-</script>
