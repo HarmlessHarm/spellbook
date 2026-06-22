@@ -1,11 +1,11 @@
 ---
-import { getCollection } from 'astro:content';
+import { getSpells } from '../lib/spells';
+import { marketplaceCommand } from '../lib/install';
 import Layout from '../layouts/Layout.astro';
 import SpellCard from '../components/SpellCard.astro';
 
-const skills = await getCollection('skills');
-const categories = ['all', ...new Set(skills.map(s => s.data.category))];
-const installCmd = '/plugin marketplace add harmlessharm/spellbook';
+const spells = await getSpells();
+const categories = ['all', ...new Set(spells.map(s => s.category))];
 ---
 
 <Layout>
@@ -17,12 +17,11 @@ const installCmd = '/plugin marketplace add harmlessharm/spellbook';
       <polygon class="d3" points="60,108 18,36 102,36"/>
       <circle class="d3" cx="60" cy="60" r="6"/>
     </svg>
-    <p class="eyebrow label">A personal grimoire</p>
     <h1>Cast a spell on your <em>workflow</em></h1>
     <p class="lede">Every spell is a skill, a chain, or a tool. Inscribe one into your agent and it can do what it couldn't a moment before. Open the grimoire and take what you need.</p>
-    <div class="scroll">
-      <code><span class="sigil-prompt">›</span>{installCmd}</code>
-      <button class="conjure" type="button" id="conjure">Copy</button>
+    <div class="scroll" data-cmd={marketplaceCommand}>
+      <code><span class="sigil-prompt">›</span>{marketplaceCommand}</code>
+      <button class="conjure js-copy" type="button">Copy</button>
     </div>
   </section>
 
@@ -39,7 +38,7 @@ const installCmd = '/plugin marketplace add harmlessharm/spellbook';
           <circle cx="11" cy="11" r="7"/>
           <path d="M21 21l-4.3-4.3"/>
         </svg>
-        <input id="seek" type="search" placeholder="Search the grimoire by name, rune, or effect" aria-label="Search spells" />
+        <input id="seek" type="search" placeholder="Search by name, category, or tag" aria-label="Search spells" />
         <kbd>/</kbd>
       </label>
       <div class="categories" id="categories">
@@ -50,9 +49,9 @@ const installCmd = '/plugin marketplace add harmlessharm/spellbook';
         ))}
       </div>
     </div>
-    <p class="count" id="count">{skills.length} spell{skills.length !== 1 ? 's' : ''} inscribed</p>
+    <p class="count" id="count">{spells.length} spell{spells.length !== 1 ? 's' : ''} inscribed</p>
     <div class="grid" id="grid">
-      {skills.map(skill => <SpellCard skill={skill} />)}
+      {spells.map(spell => <SpellCard spell={spell} />)}
       <p class="empty" id="empty" hidden>No spell answers that call. Try another word.</p>
     </div>
   </section>
@@ -88,8 +87,6 @@ const installCmd = '/plugin marketplace add harmlessharm/spellbook';
 
   @keyframes scribe { to { stroke-dashoffset: 0 } }
 
-  .hero .eyebrow { color: var(--ember); margin-bottom: 1rem }
-
   .hero h1 {
     font-family: var(--sage);
     font-weight: 600;
@@ -97,7 +94,7 @@ const installCmd = '/plugin marketplace add harmlessharm/spellbook';
     line-height: 56px;
     letter-spacing: -0.02em;
     margin: 0 auto 0.8rem;
-    max-width: 14ch;
+    white-space: nowrap;
   }
 
   .hero h1 em { font-style: italic; color: var(--primary) }
@@ -109,24 +106,15 @@ const installCmd = '/plugin marketplace add harmlessharm/spellbook';
     max-width: 560px;
     margin: 0 auto 2rem;
   }
+
 </style>
 
-<script define:vars={{ installCmd }}>
-  const conjure = document.getElementById('conjure');
-  conjure?.addEventListener('click', () => {
-    navigator.clipboard?.writeText(installCmd);
-    conjure.textContent = 'Copied';
-    conjure.classList.add('pulse');
-    setTimeout(() => {
-      conjure.textContent = 'Copy';
-      conjure.classList.remove('pulse');
-    }, 1500);
-  });
-
-  const seek = document.getElementById('seek');
+<script>
+  // Search + filter
+  const seek = document.getElementById('seek') as HTMLInputElement | null;
   const countEl = document.getElementById('count');
   const emptyEl = document.getElementById('empty');
-  const cards = Array.from(document.querySelectorAll('.card[data-category]'));
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('.card[data-category]'));
   let activeCat = 'all';
 
   document.addEventListener('keydown', e => {
@@ -138,7 +126,7 @@ const installCmd = '/plugin marketplace add harmlessharm/spellbook';
 
   seek?.addEventListener('input', filter);
 
-  document.getElementById('categories')?.querySelectorAll('.chip').forEach(btn => {
+  document.getElementById('categories')?.querySelectorAll<HTMLElement>('.chip').forEach(btn => {
     btn.addEventListener('click', () => {
       activeCat = btn.getAttribute('data-cat') ?? 'all';
       document.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', String(c === btn)));

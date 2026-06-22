@@ -6,7 +6,7 @@ interface Props {
 
 const {
   title = 'The Spell Book — Cast a spell on your workflow',
-  description = 'A personal grimoire of spells: skills, chains, and tools you cast to give your AI agent new powers.',
+  description = 'The Spell Book — a Claude Code plugin marketplace of skills, commands, and tools to supercharge your AI agent workflows.',
 } = Astro.props;
 
 const base = import.meta.env.BASE_URL;
@@ -323,6 +323,7 @@ const base = import.meta.env.BASE_URL;
   }
 
   .chip:hover { color: var(--on-surface) }
+  .chip[aria-pressed="true"] { border-color: var(--primary); color: var(--primary) }
   .chip[data-cat="all"][aria-pressed="true"] { border-color: var(--ember); color: var(--primary) }
   .chip[data-cat="git"][aria-pressed="true"] { border-color: var(--ember); color: var(--ember) }
   .chip[data-cat="debugging"][aria-pressed="true"] { border-color: var(--mana); color: var(--mana) }
@@ -350,6 +351,8 @@ const base = import.meta.env.BASE_URL;
     border-radius: 2px;
     padding: 24px;
     transition: transform 0.25s ease;
+    display: flex;
+    flex-direction: column;
   }
 
   .card .corner {
@@ -376,6 +379,7 @@ const base = import.meta.env.BASE_URL;
   }
 
   .card:hover { transform: translateY(-4px) }
+  .card:hover .corner { border-color: var(--primary) }
   .card.git:hover .corner { border-color: var(--ember) }
   .card.debugging:hover .corner { border-color: var(--mana) }
   .card.testing:hover .corner { border-color: var(--arcane) }
@@ -387,11 +391,38 @@ const base = import.meta.env.BASE_URL;
     font-size: 12px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
+    color: var(--primary);
   }
 
   .git .school { color: var(--ember) }
   .debugging .school { color: var(--mana) }
   .testing .school { color: var(--arcane) }
+
+  /* ---- type badge + version ---- */
+  .type-badge {
+    font-family: var(--alchemist);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-radius: 2px;
+    padding: 0.1rem 0.4rem;
+    background: rgba(160, 142, 122, 0.15);
+    color: var(--faded-ink);
+    margin-left: auto;
+  }
+
+  [data-type="skill"] .type-badge { background: rgba(245, 158, 11, 0.15); color: var(--ember) }
+  [data-type="command"] .type-badge { background: rgba(211, 187, 255, 0.18); color: var(--mana) }
+  [data-type="tool"] .type-badge { background: rgba(134, 239, 172, 0.15); color: #86efac }
+
+  .version {
+    font-family: var(--alchemist);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--faded-ink);
+    opacity: 0.55;
+    margin: 0.1rem 0 0.6rem;
+  }
 
   .card h3 {
     font-family: var(--sage);
@@ -441,6 +472,7 @@ const base = import.meta.env.BASE_URL;
     transition: all 0.2s;
     position: relative;
     overflow: hidden;
+    margin-top: auto;
   }
 
   .cast svg { width: 14px; height: 14px }
@@ -574,7 +606,7 @@ const base = import.meta.env.BASE_URL;
 
   @media (max-width: 600px) {
     .hero { padding: 56px 0 40px }
-    .hero h1 { font-size: 32px; line-height: 40px }
+    .hero h1 { font-size: 32px; line-height: 40px; white-space: normal }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -583,3 +615,36 @@ const base = import.meta.env.BASE_URL;
     html { scroll-behavior: auto }
   }
 </style>
+
+<script>
+  // ---- Copy handlers (global) ----
+  document.addEventListener('click', e => {
+    const target = e.target;
+    if (!(target instanceof Element)) return;
+
+    const copyBtn = target.closest<HTMLElement>('.js-copy');
+    if (!copyBtn) return;
+
+    const container = copyBtn.matches('[data-cmd]') ? copyBtn : copyBtn.closest<HTMLElement>('[data-cmd]');
+    const cmd = container?.dataset.cmd ?? '';
+    if (cmd) navigator.clipboard?.writeText(cmd);
+
+    if (copyBtn.classList.contains('cast')) {
+      if (!copyBtn.dataset.originalHtml) copyBtn.dataset.originalHtml = copyBtn.innerHTML;
+      copyBtn.classList.add('done', 'pulse');
+      copyBtn.innerHTML = '✦ Copied to your hand';
+      setTimeout(() => {
+        copyBtn.classList.remove('done', 'pulse');
+        copyBtn.innerHTML = copyBtn.dataset.originalHtml ?? '';
+      }, 1500);
+    } else {
+      const original = copyBtn.textContent ?? 'Copy';
+      copyBtn.textContent = 'Copied';
+      copyBtn.classList.add('pulse');
+      setTimeout(() => {
+        copyBtn.textContent = original;
+        copyBtn.classList.remove('pulse');
+      }, 1500);
+    }
+  });
+</script>
