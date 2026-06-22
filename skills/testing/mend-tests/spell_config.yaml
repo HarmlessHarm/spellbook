@@ -1,0 +1,6 @@
+name: mend-tests
+title: Mend Tests
+type: skill
+category: testing
+version: "1.0.0"
+tags: [skill, testing, debugging, ci]

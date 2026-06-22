@@ -1,0 +1,6 @@
+name: summon-pr
+title: Summon Pull Request
+type: skill
+category: git
+version: "1.0.0"
+tags: [skill, git, pull-request, review]

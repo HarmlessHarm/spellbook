@@ -1,9 +1,6 @@
 ---
 name: mend-tests
-title: Mend Tests
 description: Repair a failing suite without silently weakening or skipping assertions.
-category: testing
-tags: [testing, debugging, ci]
 ---
 
 Cast this to heal a failing suite — honestly.

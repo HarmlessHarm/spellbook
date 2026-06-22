@@ -1,0 +1,6 @@
+name: scry-logs
+title: Scry the Logs
+type: skill
+category: debugging
+version: "1.0.0"
+tags: [skill, debugging, logs, triage]

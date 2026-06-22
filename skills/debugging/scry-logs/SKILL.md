@@ -1,9 +1,6 @@
 ---
 name: scry-logs
-title: Scry the Logs
 description: Peer into noisy logs and stack traces to divine the first true root cause, not the last loud symptom.
-category: debugging
-tags: [debugging, logs, triage]
 ---
 
 Cast this to find signal in log noise.
