@@ -10,6 +10,7 @@ export interface MergedSpell {
   version: string;
   tags: string[];
   entrypoint?: string;
+  download?: string;
   description: string;
   bodyEntry: Awaited<ReturnType<typeof getCollection<'spellBodies'>>>[number] | undefined;
 }
