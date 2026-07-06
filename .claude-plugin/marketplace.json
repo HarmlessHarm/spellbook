@@ -27,6 +27,12 @@
       "description": "Repair failing tests without silently weakening assertions."
     },
     {
+      "name": "chat-handoff",
+      "source": "./skills/workflow/chat-handoff",
+      "version": "1.0.0",
+      "description": "Package a brainstorming chat into a structured handoff bundle of markdown docs for Claude Code."
+    },
+    {
       "name": "sample-command",
       "source": "./commands/sample-command",
       "version": "0.1.0",

@@ -1,0 +1,7 @@
+name: chat-handoff
+title: Chat Handoff
+type: skill
+category: workflow
+version: "1.0.0"
+tags: [skill, workflow, handoff, planning, brainstorm, claude-code]
+download: chat-handoff.skill

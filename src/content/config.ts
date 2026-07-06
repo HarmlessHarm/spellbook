@@ -15,6 +15,7 @@ const spells = defineCollection({
     version: z.string().default('1.0.0'),
     tags: z.array(z.string()).optional().default([]),
     entrypoint: z.string().optional(),
+    download: z.string().optional(),
   }),
 });
 
